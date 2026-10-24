@@ -1,0 +1,39 @@
+format = 1
+environment = []
+tool = []
+
+[[resolved_environment]]
+required_capabilities = []
+request_digest = "sha256:aad719a2d85b0852074064e231ddbac8d168eb55c08867b767925441b18072d2"
+roots = ["sha256:8db154c3c835e2791ca185f1662ab72e786ca3657ef400f2ba4f1fc463c5869d"]
+
+[resolved_environment.requests]
+"oyzu:zig" = "0.15.2"
+
+[resolved_environment.native_constraints]
+"oyzu:zig" = ["semver:>=0.15.2"]
+
+[resolution."sha256:8db154c3c835e2791ca185f1662ab72e786ca3657ef400f2ba4f1fc463c5869d"]
+tool = "oyzu:zig"
+version = "0.15.2"
+backend_digest = "sha256:b03a56044afc327f709f699dc5d62874624ff05cc426afed981d2bf679b93705"
+execution_platform = "linux/amd64/gnu"
+components = []
+
+[resolution."sha256:8db154c3c835e2791ca185f1662ab72e786ca3657ef400f2ba4f1fc463c5869d".inputs.archive]
+url = "https://ziglang.org/download/0.15.2/zig-x86_64-linux-0.15.2.tar.xz"
+digest = "sha256:02aa270f183da276e5b5920b1dac44a63f1a49e55050ebde3aecc9eb82f93239"
+
+[[plugin]]
+reference = "zig/project"
+profile = "project"
+package = "oyzu/zig"
+major = 0
+version = "0.1.0"
+release = "sha256:fa18420fa1395cd9c0ab662450cb2a3d24ce0fc24d7d688d8662128f1bebf23e"
+
+[[plugin.payloads]]
+os = "linux"
+arch = "amd64"
+abi = "gnu"
+digest = "sha256:55daf1dc08d76ccb88c2bab6400be0f339a7afaaf3cc899ba42f5e8f914c5132"
