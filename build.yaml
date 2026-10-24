@@ -5,3 +5,11 @@ builds:
     with:
       steps: [lib-vt]
       install-format: tar.gz
+  ghostty-docs:
+    uses: zig/project
+    inputs: [dist]
+    with:
+      definitions:
+        emit-docs: true
+        emit-exe: false
+      install-format: tar.gz
