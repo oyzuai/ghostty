@@ -2378,6 +2378,22 @@ test Action {
     _ = Action.C;
 }
 
+test "Action C semantic prompt conversion" {
+    if (comptime lib_target != .c) return;
+
+    const options: []const u8 = "aid=42;cl=m";
+    const action: Action = .{ .semantic_prompt = .{
+        .action = .prompt_start,
+        .options_unvalidated = options,
+    } };
+    const c = action.cval();
+    try testing.expectEqual(Action.Tag.semantic_prompt, c.tag);
+    try testing.expectEqual(@as(c_int, 3), c.value.semantic_prompt.action);
+    try testing.expectEqual(options.len, c.value.semantic_prompt.options_unvalidated.len);
+    try testing.expect(c.value.semantic_prompt.options_unvalidated.ptr == options.ptr);
+    try testing.expectEqual(@sizeOf([16]u64), @sizeOf(Action.CValue));
+}
+
 test "stream: print" {
     const H = struct {
         c: ?u21 = 0,

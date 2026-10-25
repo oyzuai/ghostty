@@ -254,19 +254,33 @@ pub fn build(b: *std.Build) !void {
         run_valgrind_step.dependOn(&run_cmd.step);
     }
 
+    // Shared header verification for the full and VT unit tests.
+    const ghostty_h = b.addTranslateC(.{
+        .root_source_file = b.path("include/ghostty.h"),
+        .target = config.baselineTarget(),
+        .optimize = .Debug,
+    });
+    const ghostty_h_module = ghostty_h.createModule();
+
     // Zig module tests
     {
         const mod_vt_test = b.addTest(.{
+            // Match the full test graph on x86_64.
+            .use_llvm = true,
             .root_module = mod.vt,
             .filters = test_filters,
         });
+        mod_vt_test.root_module.addImport("ghostty.h", ghostty_h_module);
         const mod_vt_test_run = b.addRunArtifact(mod_vt_test);
         test_lib_vt_step.dependOn(&mod_vt_test_run.step);
 
         const mod_vt_c_test = b.addTest(.{
+            // Match the full test graph on x86_64.
+            .use_llvm = true,
             .root_module = mod.vt_c,
             .filters = test_filters,
         });
+        mod_vt_c_test.root_module.addImport("ghostty.h", ghostty_h_module);
         const mod_vt_c_test_run = b.addRunArtifact(mod_vt_c_test);
         test_lib_vt_step.dependOn(&mod_vt_c_test_run.step);
     }
@@ -291,13 +305,7 @@ pub fn build(b: *std.Build) !void {
         if (config.emit_test_exe) b.installArtifact(test_exe);
         _ = try deps.add(test_exe);
 
-        // Verify our internal libghostty header.
-        const ghostty_h = b.addTranslateC(.{
-            .root_source_file = b.path("include/ghostty.h"),
-            .target = config.baselineTarget(),
-            .optimize = .Debug,
-        });
-        test_exe.root_module.addImport("ghostty.h", ghostty_h.createModule());
+        test_exe.root_module.addImport("ghostty.h", ghostty_h_module);
 
         // Normal test running
         const test_run = b.addRunArtifact(test_exe);

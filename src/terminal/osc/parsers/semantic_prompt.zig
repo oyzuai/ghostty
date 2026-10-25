@@ -1,5 +1,6 @@
 //! https://gitlab.freedesktop.org/Per_Bothner/specifications/blob/master/proposals/semantic-prompts.md
 const std = @import("std");
+const String = @import("../../../lib/types.zig").String;
 
 const Parser = @import("../../osc.zig").Parser;
 const OSCCommand = @import("../../osc.zig").Command;
@@ -27,6 +28,29 @@ pub const Command = struct {
         end_input_start_output, // 'C'
         end_command, // 'D'
     };
+
+    /// Borrowed C representation. Options remain valid only while the
+    /// source command's options buffer remains valid.
+    pub const C = extern struct {
+        action: c_int,
+        options_unvalidated: String,
+    };
+
+    pub fn cval(self: Command) C {
+        return .{
+            .action = switch (self.action) {
+                .fresh_line => 0,
+                .fresh_line_new_prompt => 1,
+                .new_command => 2,
+                .prompt_start => 3,
+                .end_prompt_start_input => 4,
+                .end_prompt_start_input_terminate_eol => 5,
+                .end_input_start_output => 6,
+                .end_command => 7,
+            },
+            .options_unvalidated = String.init(self.options_unvalidated),
+        };
+    }
 
     pub fn init(action: Action) Command {
         return .{
@@ -57,6 +81,33 @@ pub const Command = struct {
         return;
     }
 };
+
+test "Command C conversion" {
+    const testing = std.testing;
+    const actions = [_]Command.Action{
+        .fresh_line,
+        .fresh_line_new_prompt,
+        .new_command,
+        .prompt_start,
+        .end_prompt_start_input,
+        .end_prompt_start_input_terminate_eol,
+        .end_input_start_output,
+        .end_command,
+    };
+    const options: []const u8 = "aid=42;cl=m";
+    for (actions, 0..) |action, i| {
+        for ([_][]const u8{ "", options }) |raw| {
+            const command: Command = .{
+                .action = action,
+                .options_unvalidated = raw,
+            };
+            const c = command.cval();
+            try testing.expectEqual(@as(c_int, @intCast(i)), c.action);
+            try testing.expectEqual(raw.len, c.options_unvalidated.len);
+            try testing.expect(c.options_unvalidated.ptr == raw.ptr);
+        }
+    }
+}
 
 pub const Option = enum {
     aid,
