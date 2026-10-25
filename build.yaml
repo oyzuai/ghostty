@@ -1,10 +1,4 @@
 builds:
-  ghostty:
-    uses: zig/project
-    inputs: [dist]
-    with:
-      steps: [lib-vt]
-      install-format: tar.gz
   ghostty-docs:
     uses: zig/project
     inputs: [dist]
