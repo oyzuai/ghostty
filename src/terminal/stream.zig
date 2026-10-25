@@ -278,7 +278,7 @@ pub const Action = union(Key) {
         pub const C = u16;
 
         pub fn cval(self: DeviceStatus) DeviceStatus.C {
-            return @bitCast(self.request);
+            return @intFromEnum(self.request);
         }
     };
 
@@ -288,7 +288,7 @@ pub const Action = union(Key) {
         pub const C = u16;
 
         pub fn cval(self: Mode) Mode.C {
-            return @bitCast(self.mode);
+            return @intFromEnum(self.mode);
         }
     };
 
@@ -2376,6 +2376,70 @@ test Action {
     // Forces the C type to be reified when the target is C, ensuring
     // all our types are C ABI compatible.
     _ = Action.C;
+}
+
+test "Action C semantic prompt conversion" {
+    if (comptime lib_target != .c) return;
+
+    const options: []const u8 = "aid=42;cl=m";
+    const action: Action = .{ .semantic_prompt = .{
+        .action = .prompt_start,
+        .options_unvalidated = options,
+    } };
+    const c = action.cval();
+    try testing.expectEqual(Action.Tag.semantic_prompt, c.tag);
+    try testing.expectEqual(@as(c_int, 3), c.value.semantic_prompt.action);
+    try testing.expectEqual(options.len, c.value.semantic_prompt.options_unvalidated.len);
+    try testing.expect(c.value.semantic_prompt.options_unvalidated.ptr == options.ptr);
+    try testing.expectEqual(@sizeOf([16]u64), @sizeOf(Action.CValue));
+}
+
+test "Action C device status and mode conversions preserve flag bits" {
+    if (comptime lib_target != .c) return;
+
+    const requests = [_]struct { request: device_status.Request, expected: u16 }{
+        .{ .request = .operating_status, .expected = 5 },
+        .{ .request = .cursor_position, .expected = 6 },
+        .{ .request = .color_scheme, .expected = 0x8000 | 996 },
+    };
+    for (requests) |request| {
+        const action: Action = .{ .device_status = .{ .request = request.request } };
+        const c = action.cval();
+        try testing.expectEqual(Action.Tag.device_status, c.tag);
+        try testing.expectEqual(request.expected, c.value.device_status);
+    }
+
+    const mode_values = [_]struct { mode: modes.Mode, expected: u16 }{
+        .{ .mode = .cursor_keys, .expected = 1 },
+        .{ .mode = .insert, .expected = 0x8000 | 4 },
+    };
+    for (mode_values) |mode| {
+        const action: Action = .{ .set_mode = .{ .mode = mode.mode } };
+        const c = action.cval();
+        try testing.expectEqual(Action.Tag.set_mode, c.tag);
+        try testing.expectEqual(mode.expected, c.value.set_mode);
+    }
+}
+
+test "Action C DCS conversion borrows parser buffers" {
+    if (comptime lib_target != .c) return;
+
+    const intermediates: []const u8 = "$";
+    const params: []const u16 = &.{ 1, 4 };
+    for ([_]Parser.Action.DCS{
+        .{ .final = 'q' },
+        .{ .intermediates = intermediates, .params = params, .final = 'p' },
+    }) |dcs| {
+        const action: Action = .{ .dcs_hook = dcs };
+        const c = action.cval();
+        try testing.expectEqual(Action.Tag.dcs_hook, c.tag);
+        try testing.expect(c.value.dcs_hook.intermediates == dcs.intermediates.ptr);
+        try testing.expectEqual(dcs.intermediates.len, c.value.dcs_hook.intermediates_len);
+        try testing.expect(c.value.dcs_hook.params == dcs.params.ptr);
+        try testing.expectEqual(dcs.params.len, c.value.dcs_hook.params_len);
+        try testing.expectEqual(dcs.final, c.value.dcs_hook.final);
+        try testing.expectEqual(@sizeOf([16]u64), @sizeOf(Action.CValue));
+    }
 }
 
 test "stream: print" {

@@ -1,6 +1,6 @@
 const std = @import("std");
 const assert = @import("../quirks.zig").inlineAssert;
-const configpkg = @import("../config.zig");
+const BoldColor = @import("../config/BoldColor.zig").BoldColor;
 const color = @import("color.zig");
 const sgr = @import("sgr.zig");
 const page = @import("page.zig");
@@ -137,7 +137,7 @@ pub const Style = struct {
         palette: *const color.Palette,
 
         /// If specified, the color to use for bold text.
-        bold: ?configpkg.BoldColor = null,
+        bold: ?BoldColor = null,
     };
 
     /// Returns the fg color for a cell with this style given the palette

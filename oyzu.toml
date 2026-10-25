@@ -1,6 +1,5 @@
 [tools]
 zig = "0.15.2"
-"github:jgm/pandoc" = "3.12.1"
 
 [build]
 bundleDirectory = ".oyzu/bundle"

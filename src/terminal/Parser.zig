@@ -133,6 +133,17 @@ pub const Action = union(enum) {
             params_len: usize,
             final: u8,
         };
+
+        /// Borrow parser buffers without extending their lifetime.
+        pub fn cval(self: DCS) C {
+            return .{
+                .intermediates = self.intermediates.ptr,
+                .intermediates_len = self.intermediates.len,
+                .params = self.params.ptr,
+                .params_len = self.params.len,
+                .final = self.final,
+            };
+        }
     };
 
     // Implement formatter for logging. This is mostly copied from the
@@ -435,6 +446,22 @@ test {
         try testing.expect(a[0] == null);
         try testing.expect(a[1].? == .execute);
         try testing.expect(a[2] == null);
+    }
+}
+
+test "DCS C conversion borrows parser buffers" {
+    const intermediates: []const u8 = "$";
+    const params: []const u16 = &.{ 1, 4 };
+    for ([_]Action.DCS{
+        .{ .final = 'q' },
+        .{ .intermediates = intermediates, .params = params, .final = 'p' },
+    }) |dcs| {
+        const c = dcs.cval();
+        try testing.expect(c.intermediates == dcs.intermediates.ptr);
+        try testing.expectEqual(dcs.intermediates.len, c.intermediates_len);
+        try testing.expect(c.params == dcs.params.ptr);
+        try testing.expectEqual(dcs.params.len, c.params_len);
+        try testing.expectEqual(dcs.final, c.final);
     }
 }
 

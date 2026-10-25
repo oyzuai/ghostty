@@ -51,10 +51,10 @@ profile = "project"
 package = "oyzu/zig"
 major = 0
 version = "0.1.0"
-release = "sha256:479a394db3e5e3348beda02aadac5dea8182508afa6390c0dfa1be88988f36b8"
+release = "sha256:fa18420fa1395cd9c0ab662450cb2a3d24ce0fc24d7d688d8662128f1bebf23e"
 
 [[plugin.payloads]]
 os = "linux"
 arch = "amd64"
 abi = "gnu"
-digest = "sha256:2b256bd45bab4d89aab117acf3a40be3979a218b254b1ae740ec41dcb41ce0ba"
+digest = "sha256:55daf1dc08d76ccb88c2bab6400be0f339a7afaaf3cc899ba42f5e8f914c5132"

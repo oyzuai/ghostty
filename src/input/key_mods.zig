@@ -849,7 +849,7 @@ test "RemapSet: parse aliased modifiers on target side" {
 
 test "RemapSet: formatEntry empty" {
     const testing = std.testing;
-    const formatterpkg = @import("../config/formatter.zig");
+    const formatterpkg = @import("../config/entry_formatter.zig");
 
     var buf: std.Io.Writer.Allocating = .init(testing.allocator);
     defer buf.deinit();
@@ -861,7 +861,7 @@ test "RemapSet: formatEntry empty" {
 
 test "RemapSet: formatEntry single sided" {
     const testing = std.testing;
-    const formatterpkg = @import("../config/formatter.zig");
+    const formatterpkg = @import("../config/entry_formatter.zig");
 
     var buf: std.Io.Writer.Allocating = .init(testing.allocator);
     defer buf.deinit();
@@ -878,7 +878,7 @@ test "RemapSet: formatEntry single sided" {
 
 test "RemapSet: formatEntry unsided creates two entries" {
     const testing = std.testing;
-    const formatterpkg = @import("../config/formatter.zig");
+    const formatterpkg = @import("../config/entry_formatter.zig");
 
     var buf: std.Io.Writer.Allocating = .init(testing.allocator);
     defer buf.deinit();
@@ -898,7 +898,7 @@ test "RemapSet: formatEntry unsided creates two entries" {
 
 test "RemapSet: formatEntry right sided" {
     const testing = std.testing;
-    const formatterpkg = @import("../config/formatter.zig");
+    const formatterpkg = @import("../config/entry_formatter.zig");
 
     var buf: std.Io.Writer.Allocating = .init(testing.allocator);
     defer buf.deinit();
