@@ -4,6 +4,16 @@ tool = []
 
 [[resolved_environment]]
 required_capabilities = []
+request_digest = "sha256:9bce4267507f355743d1b1654f12088d3a875d87e8bc0c0b54ab72472f559a0d"
+roots = ["sha256:2a4c67c508cb4892fb9e5d8c26417c3b92e3ebca43137043de0b3c73c19ed004"]
+
+[resolved_environment.requests]
+"github:jgm/pandoc" = "3.12.1"
+
+[resolved_environment.native_constraints]
+
+[[resolved_environment]]
+required_capabilities = []
 request_digest = "sha256:aad719a2d85b0852074064e231ddbac8d168eb55c08867b767925441b18072d2"
 roots = ["sha256:8db154c3c835e2791ca185f1662ab72e786ca3657ef400f2ba4f1fc463c5869d"]
 
@@ -12,6 +22,17 @@ roots = ["sha256:8db154c3c835e2791ca185f1662ab72e786ca3657ef400f2ba4f1fc463c5869
 
 [resolved_environment.native_constraints]
 "oyzu:zig" = ["semver:>=0.15.2"]
+
+[resolution."sha256:2a4c67c508cb4892fb9e5d8c26417c3b92e3ebca43137043de0b3c73c19ed004"]
+tool = "github:jgm/pandoc"
+version = "3.12.1"
+backend_digest = "sha256:b03a56044afc327f709f699dc5d62874624ff05cc426afed981d2bf679b93705"
+execution_platform = "linux/amd64/gnu"
+components = ["bin:pandoc=pandoc-3.12.1/bin/pandoc", "kind:tar.gz", "tag:3.12.1"]
+
+[resolution."sha256:2a4c67c508cb4892fb9e5d8c26417c3b92e3ebca43137043de0b3c73c19ed004".inputs.archive]
+url = "https://github.com/jgm/pandoc/releases/download/3.12.1/pandoc-3.12.1-linux-amd64.tar.gz"
+digest = "sha256:d0c90410e90204c9ca83b8539fac5c7aed01fd537207e4585849f8abc5df20b8"
 
 [resolution."sha256:8db154c3c835e2791ca185f1662ab72e786ca3657ef400f2ba4f1fc463c5869d"]
 tool = "oyzu:zig"
@@ -30,10 +51,10 @@ profile = "project"
 package = "oyzu/zig"
 major = 0
 version = "0.1.0"
-release = "sha256:fa18420fa1395cd9c0ab662450cb2a3d24ce0fc24d7d688d8662128f1bebf23e"
+release = "sha256:479a394db3e5e3348beda02aadac5dea8182508afa6390c0dfa1be88988f36b8"
 
 [[plugin.payloads]]
 os = "linux"
 arch = "amd64"
 abi = "gnu"
-digest = "sha256:55daf1dc08d76ccb88c2bab6400be0f339a7afaaf3cc899ba42f5e8f914c5132"
+digest = "sha256:2b256bd45bab4d89aab117acf3a40be3979a218b254b1ae740ec41dcb41ce0ba"
