@@ -1,9 +1,7 @@
 builds:
-  ghostty-docs:
+  ghostty-vt:
     uses: zig/project
     inputs: [dist]
     with:
-      definitions:
-        emit-docs: true
-        emit-exe: false
+      steps: [lib-vt, test-lib-vt]
       install-format: tar.gz
