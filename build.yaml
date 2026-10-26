@@ -1,7 +1,12 @@
 builds:
-  ghostty-vt:
+  ghostty-linux:
     uses: zig/project
     inputs: [dist]
     with:
-      steps: [lib-vt, test-lib-vt]
+      definitions:
+        gtk-wayland: false
+        gtk-x11: true
+        emit-docs: false
+        emit-terminfo: true
+        strip: true
       install-format: tar.gz
